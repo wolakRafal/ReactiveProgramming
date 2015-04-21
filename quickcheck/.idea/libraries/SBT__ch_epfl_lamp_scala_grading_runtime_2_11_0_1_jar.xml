@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="SBT: ch.epfl.lamp:scala-grading-runtime_2.11:0.1:jar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.ivy2/cache/ch.epfl.lamp/scala-grading-runtime_2.11/jars/scala-grading-runtime_2.11-0.1.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.ivy2/cache/ch.epfl.lamp/scala-grading-runtime_2.11/docs/scala-grading-runtime_2.11-0.1-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.ivy2/cache/ch.epfl.lamp/scala-grading-runtime_2.11/srcs/scala-grading-runtime_2.11-0.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

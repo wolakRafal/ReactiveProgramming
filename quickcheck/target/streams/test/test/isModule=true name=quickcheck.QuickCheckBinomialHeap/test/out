@@ -1,0 +1,16 @@
+[0m[[0minfo[0m] [0m+ Heap.min1: OK, passed 100 tests.[0m
+[0m[[0minfo[0m] [0m+ Heap.min2: OK, passed 100 tests.[0m
+[0m[[0minfo[0m] [0m+ Heap.min3: OK, passed 100 tests.[0m
+[0m[[0minfo[0m] [0m+ Heap.min3: OK, passed 100 tests.[0m
+[0m[[0minfo[0m] [0m+ Heap.If you insert an element into an empty heap, then delete the minimum, the resulting heap should be empty.: OK, passed 100 tests.[0m
+[0m[[0minfo[0m] [0m+ Heap.sorted: OK, passed 100 tests.[0m
+[0m[[0minfo[0m] [0m+ Heap.sorted2: OK, passed 100 tests.[0m
+[0m[[0minfo[0m] [0m+ Heap.meld min: OK, passed 100 tests.[0m
+[0m[[0minfo[0m] [0m+ Heap.sorted sequence by continually deleting minium: OK, passed 100 tests.[0m
+[0m[[0minfo[0m] [0m+ Heap.Finding a minimum of the melding : OK, passed 100 tests.[0m
+[0m[[0minfo[0m] [0m+ Heap.Empty test - melding : OK, passed 100 tests.[0m
+[0m[[0minfo[0m] [0m+ Heap.meld the same: OK, passed 100 tests.[0m
+[0m[[0minfo[0m] [0m+ Heap.Delete and check size: OK, passed 100 tests.[0m
+[0m[[0minfo[0m] [0m+ Heap.compare to Heaps: OK, passed 100 tests.[0m
+[0m[[0minfo[0m] [0m+ Heap.meld with empty heaps: OK, passed 100 tests.[0m
+[0m[[0minfo[0m] [0m+ Heap.meld empty heaps: OK, passed 100 tests.[0m
