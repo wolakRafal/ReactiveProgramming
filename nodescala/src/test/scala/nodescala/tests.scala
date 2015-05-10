@@ -91,6 +91,61 @@ class NodeScalaSuite extends FunSuite {
       l.emit(req)
     }
   }
+
+
+  test("continueWith should wait for the first future to complete") {
+    val delay = Future.delay(1 second)
+    val always = (f: Future[Unit]) => 42
+
+    try {
+      Await.result(delay.continueWith(always), 500 millis)
+      assert(false)
+    }
+    catch {
+      case t: TimeoutException => // ok
+    }
+  }
+
+  test("continueWith") {
+    val future = Future {
+      Thread.sleep(1000 * 10); 111
+    }
+    val fu = Future {
+      2
+    }
+
+
+    val res = future.continueWith(fu => {
+      "testme"
+    })
+
+    res.onComplete(
+    {
+      case Success(successValue) =>
+        assert(successValue == "testme", "Failure in continuewith")
+      case Failure(e) =>
+        assert(true)
+      case _ =>
+        println("Cannot come here")
+        assert(false)
+    }
+    )
+
+    Thread.sleep(1000 * 20)
+  }
+
+
+  test("continueWith simple")
+  {
+
+    Future { 3 }
+    .continueWith(fT => (Await.result(fT, 0 seconds) + 1).toString)
+    .onComplete {
+      case Success(x) => assert(x equals "4")
+      case Failure(exn) => fail(exn)
+    }
+  }
+
   test("Server should serve requests") {
     val dummy = new DummyServer(8191)
     val dummySubscription = dummy.start("/testDir") {

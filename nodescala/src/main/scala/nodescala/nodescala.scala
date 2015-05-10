@@ -1,18 +1,14 @@
 package nodescala
 
-import java.util.Date
-
-import com.sun.net.httpserver._
-import nodescala.NodeScala.Listener
-import scala.concurrent._
-import scala.concurrent.duration._
-import ExecutionContext.Implicits.global
-import scala.async.Async.{async, await}
-import scala.collection._
-import scala.collection.JavaConversions._
-import java.util.concurrent.{Executor, ThreadPoolExecutor, TimeUnit, LinkedBlockingQueue}
-import com.sun.net.httpserver.{HttpExchange, HttpHandler, HttpServer}
 import java.net.InetSocketAddress
+import java.util.concurrent.{LinkedBlockingQueue, ThreadPoolExecutor, TimeUnit}
+
+import com.sun.net.httpserver.{HttpExchange, HttpHandler, HttpServer}
+
+import scala.collection.JavaConversions._
+import scala.collection._
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent._
 
 /** Contains utilities common to the NodeScala© framework.
  */
@@ -37,9 +33,7 @@ trait NodeScala {
       val chunk = response.next()
       exchange.write(chunk)
     }
-    if (token.isCancelled){
       exchange.close()
-    }
   }
 
   /** A server:
@@ -53,18 +47,20 @@ trait NodeScala {
    *  @return               a subscription that can stop the server and all its asynchronous operations *entirely*
    */
   def start(relativePath: String)(handler: Request => Response): Subscription = {
-    val listener = new Listener.Default(port, relativePath)
+    val listener = createListener(relativePath)
     val listenerSubscription = listener.start()
 
-    Future.run(){cancellationToken =>
+    Future.run(){
+      cancellationToken =>  async.Async.async { while(cancellationToken.nonCancelled){
+        val (request, exchange) = async.Async.await(listener.nextRequest())
+
         if(cancellationToken.nonCancelled) {
-          listener.nextRequest().map {
-            case (request, exchange) =>
-              val response = List("Hello From Server!!", "Today is", new Date().toString).iterator
-              respond(exchange,cancellationToken,response)
-          }
-        } else Future.successful(())
-    }
+          respond(exchange, cancellationToken, handler(request))
+        } else {
+          listenerSubscription.unsubscribe()
+        }
+      }
+    }}
   }
 
 }

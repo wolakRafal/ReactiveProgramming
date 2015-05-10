@@ -17,14 +17,14 @@ package object nodescala {
 
     /** Returns a future that is always completed with `value`.
      */
-    def always[T](value: T): Future[T] = async(value)
+    def always[T](value: T): Future[T] = Future.successful(value)
 
     /** Returns a future that is never completed.
      *
      *  This future may be useful when testing if timeout logic works correctly.
      */
     def never[T]: Future[T] = {
-      Promise().future
+      Promise[T]().future
     }
 
     /** Given a list of futures `fs`, returns the future holding the list of values of all the futures from `fs`.
@@ -47,10 +47,20 @@ package object nodescala {
 
     /** Returns a future with a unit value that is completed after time `t`.
      */
-    def delay(t: Duration): Future[Unit] = async {
-      blocking(Thread.sleep(t.toMillis))
-      ()
+    def delay(t: Duration): Future[Unit] = {
+      val p = Promise[Unit]()
+      Future{
+        Thread.sleep(t.toMillis)
+        p.success(Unit)
+      }
+      p.future
     }
+
+
+//      async {
+//      blocking(Thread.sleep(t.toMillis))
+//      ()
+//    }
 
     /** Completes this future with user input.
      */
@@ -90,7 +100,14 @@ package object nodescala {
      *  The function `cont` is called only after the current future completes.
      *  The resulting future contains a value returned by `cont`.
      */
-    def continueWith[S](cont: Future[T] => S): Future[S] = Future{cont(f)}
+    def continueWith[S](cont: Future[T] => S): Future[S] = {
+      f.map(_ => cont(f))
+
+//      Await.ready(f, 90.seconds)
+//      Future.successful(cont(f))
+    }
+
+//      f.map(t => cont(Future.always(t)))
 
     /** Continues the computation of this future by taking the result
      *  of the current future and mapping it into another future.
@@ -99,14 +116,16 @@ package object nodescala {
      *  The resulting future contains a value returned by `cont`.
      */
     def continue[S](cont: Try[T] => S): Future[S] = {
-      val p = Promise[S]
+      val p = Promise[S]()
       f.onComplete {
-        case s@Success(v) => p.success(cont(s))
-        case f@Failure(t) => p.success(cont(f))
+        case res => try {
+          p.success(cont(res))
+        } catch {
+          case t: Throwable => p.failure(t)
+        }
       }
       p.future
     }
-
   }
 
   /** Subscription objects are used to be able to unsubscribe

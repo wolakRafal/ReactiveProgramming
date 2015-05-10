@@ -1,10 +1,9 @@
 package nodescala
 
-import scala.language.postfixOps
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent._
 import scala.concurrent.duration._
-import ExecutionContext.Implicits.global
-import scala.async.Async.{async, await}
+import scala.language.postfixOps
 
 object Main {
 
@@ -40,7 +39,17 @@ object Main {
         println(msg)
         myServerSubscription.unsubscribe()
         println("Bye!")
+        sys.exit()
     }
+
+    terminationRequested onFailure {
+      case t: Throwable =>
+        println("Smt went wrong" + t.getMessage)
+        t.printStackTrace()
+        myServerSubscription.unsubscribe()
+        sys.exit()
+    }
+
   }
 
 }
